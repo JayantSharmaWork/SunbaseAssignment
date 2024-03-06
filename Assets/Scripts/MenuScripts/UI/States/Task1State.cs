@@ -19,5 +19,6 @@ public class Task1State : UIState
     {
         task1MainPanel.SetActive(false);
         // Extra logic could be added for other deactivation tasks
+        Task1Manager.Instance.ClearClientDataTiles();
     }
 }

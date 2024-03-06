@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using Newtonsoft.Json;
+using TMPro;
 
 public class Task1Manager : MonoBehaviour
 {
@@ -21,6 +21,7 @@ public class Task1Manager : MonoBehaviour
     #endregion
 
     private string task1APIEndpoint = "https://qa.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=client_data";
+    public bool isAPILoaded = false;
 
     public RootObject rootObject = new RootObject();
 
@@ -31,8 +32,22 @@ public class Task1Manager : MonoBehaviour
     public GameObject clientDataTilesParent;
     public List<GameObject> listOfClientDataTiles = new List<GameObject>();
 
+    // Filter
+    public TMP_Dropdown filterDropdown;
+
+    public enum ClientFilters
+    {
+        ALL,
+        MANAGER,
+        NON_MANAGER
+    }
+
+    public ClientFilters currentClientsFilter;
+
     public void InitiateWebRequest()
     {
+        if (isAPILoaded)
+            return;
         // Clear local data before intialization
         rootObject = new RootObject();
         listOfClientDataObjects.Clear();
@@ -43,12 +58,14 @@ public class Task1Manager : MonoBehaviour
 
     private void OnSuccess(string response)
     {
+        isAPILoaded = true;
         Debug.Log("Success! Response: " + response);
         ParseGetData(response);
     }
 
     private void OnError(string error)
     {
+        isAPILoaded = false;
         Debug.LogError("Error: " + error);
     }
 
@@ -93,6 +110,14 @@ public class Task1Manager : MonoBehaviour
         }
     }
 
+    public void ClearClientDataTiles()
+    {
+        foreach (Transform transform in clientDataTilesParent.transform)
+            Destroy(transform.gameObject);
+
+        listOfClientDataTiles.Clear();
+    }
+
     public void CreateClientTilesUI()
     {
         foreach (ClientDataObject clientDataObject in listOfClientDataObjects)
@@ -105,6 +130,52 @@ public class Task1Manager : MonoBehaviour
             clientDetailsTileManager.SetTileDetails();
             listOfClientDataTiles.Add(clientDataTile);
         }
+
+        FilterClientsList();
+    }
+
+    public void FilterClientsList()
+    {
+        currentClientsFilter = (ClientFilters)filterDropdown.value;
+
+        switch (currentClientsFilter)
+        {
+            case ClientFilters.ALL:
+                {
+                    foreach (GameObject clientDataTile in listOfClientDataTiles)
+                    {
+                        clientDataTile.SetActive(true);
+                    }
+                    break;
+                }
+            case ClientFilters.MANAGER:
+                {
+                    foreach (GameObject clientDataTile in listOfClientDataTiles)
+                    {
+                        if (clientDataTile.GetComponent<ClientDetailsTileManager>().clientDataObject.isManager)
+                            clientDataTile.SetActive(true);
+                        else
+                            clientDataTile.SetActive(false);
+                    }
+                    break;
+                }
+            case ClientFilters.NON_MANAGER:
+                {
+                    foreach (GameObject clientDataTile in listOfClientDataTiles)
+                    {
+                        if (!clientDataTile.GetComponent<ClientDetailsTileManager>().clientDataObject.isManager)
+                            clientDataTile.SetActive(true);
+                        else
+                            clientDataTile.SetActive(false);
+                    }
+                    break;
+                }
+        }
+    }
+
+    public void FilterTiles()
+    {
+
     }
 }
 
