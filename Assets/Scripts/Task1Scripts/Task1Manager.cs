@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using Newtonsoft.Json;
 using TMPro;
@@ -60,6 +57,7 @@ public class Task1Manager : MonoBehaviour
     {
         isAPILoaded = true;
         Debug.Log("Success! Response: " + response);
+        ApplicationManager.Instance.task1Button.interactable = true;
         ParseGetData(response);
     }
 
@@ -103,10 +101,6 @@ public class Task1Manager : MonoBehaviour
                 clientDataObject.points = data.points;
                 listOfClientDataObjects.Add(clientDataObject);
             }
-            else
-            {
-
-            }
         }
     }
 
@@ -124,8 +118,6 @@ public class Task1Manager : MonoBehaviour
         {
             GameObject clientDataTile = Instantiate(clientDataTilePrefab, clientDataTilesParent.transform);
             ClientDetailsTileManager clientDetailsTileManager = clientDataTile.GetComponent<ClientDetailsTileManager>();
-            Debug.Log("clientDetailsTileManager: " + clientDetailsTileManager);
-            Debug.Log("clientDetailsTileManager.clientDataObject: " + clientDetailsTileManager.clientDataObject);
             clientDetailsTileManager.clientDataObject = clientDataObject;
             clientDetailsTileManager.SetTileDetails();
             listOfClientDataTiles.Add(clientDataTile);
@@ -138,44 +130,33 @@ public class Task1Manager : MonoBehaviour
     {
         currentClientsFilter = (ClientFilters)filterDropdown.value;
 
-        switch (currentClientsFilter)
+        foreach (GameObject clientDataTile in listOfClientDataTiles)
         {
-            case ClientFilters.ALL:
-                {
-                    foreach (GameObject clientDataTile in listOfClientDataTiles)
+            switch (currentClientsFilter)
+            {
+                case ClientFilters.ALL:
                     {
                         clientDataTile.SetActive(true);
+                        break;
                     }
-                    break;
-                }
-            case ClientFilters.MANAGER:
-                {
-                    foreach (GameObject clientDataTile in listOfClientDataTiles)
+                case ClientFilters.MANAGER:
                     {
                         if (clientDataTile.GetComponent<ClientDetailsTileManager>().clientDataObject.isManager)
                             clientDataTile.SetActive(true);
                         else
                             clientDataTile.SetActive(false);
+                        break;
                     }
-                    break;
-                }
-            case ClientFilters.NON_MANAGER:
-                {
-                    foreach (GameObject clientDataTile in listOfClientDataTiles)
+                case ClientFilters.NON_MANAGER:
                     {
                         if (!clientDataTile.GetComponent<ClientDetailsTileManager>().clientDataObject.isManager)
                             clientDataTile.SetActive(true);
                         else
                             clientDataTile.SetActive(false);
+                        break;
                     }
-                    break;
-                }
+            }
         }
-    }
-
-    public void FilterTiles()
-    {
-
     }
 }
 

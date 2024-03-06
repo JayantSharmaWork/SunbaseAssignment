@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ApplicationManager : MonoBehaviour
 {
@@ -18,6 +17,8 @@ public class ApplicationManager : MonoBehaviour
     const string MENU = "menu";
     const string TASK1 = "task1";
     const string TASK2 = "task2";
+
+    public Button task1Button;
 
     private void Start()
     {

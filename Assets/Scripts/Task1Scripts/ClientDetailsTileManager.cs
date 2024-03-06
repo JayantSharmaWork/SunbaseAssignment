@@ -15,4 +15,9 @@ public class ClientDetailsTileManager : MonoBehaviour
     {
         nameText.text = clientDataObject.name;
     }
+
+    public void InstantiateClientDetailTile()
+    {
+        ClientsDetailsTileManager.Instance.LoadPanelData(clientDataObject.name, clientDataObject.points, clientDataObject.address);
+    }
 }
