@@ -10,6 +10,8 @@ public class MenuState : UIState
     {
         menuMainPanel.SetActive(true);
         // Extra logic could be added for other activation tasks
+
+        Task1Manager.Instance.InitiateWebRequest();
     }
 
     public override void Deactivate()

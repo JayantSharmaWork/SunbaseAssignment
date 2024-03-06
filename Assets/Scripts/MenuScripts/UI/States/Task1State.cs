@@ -10,6 +10,9 @@ public class Task1State : UIState
     {
         task1MainPanel.SetActive(true);
         // Extra logic could be added for other activation tasks
+
+        //Task1Manager.Instance.InitiateWebRequest();
+        Task1Manager.Instance.CreateClientTilesUI();
     }
 
     public override void Deactivate()
